@@ -42,6 +42,7 @@ public class OAuthTokenFilter extends AbstractPreAuthenticatedProcessingFilter {
 
 	private Object extractToken(HttpServletRequest request) {
 		String completeToken = request.getHeader(AUTHORIZATION);
+		if (completeToken == null) return null;
 		if (completeToken.toLowerCase().startsWith(BEARER_TYPE)) {
 			completeToken = completeToken.substring(BEARER_TYPE.length());
 		}

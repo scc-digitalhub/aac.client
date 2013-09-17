@@ -57,7 +57,7 @@ public class OAuthAuthenticationProvider implements AuthenticationProvider {
 	 */
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		String token = authentication.getPrincipal().toString();
+		String token = (String)authentication.getPrincipal();
 		if (token == null || token.trim().isEmpty()) {
 			throw new BadCredentialsException("Authentication token is absent"); 
 		}
