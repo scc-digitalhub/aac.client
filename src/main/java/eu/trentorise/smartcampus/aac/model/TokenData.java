@@ -25,90 +25,108 @@ public class TokenData {
 	private String token_type;
 	private String refresh_token;
 	private int expires_in;
-	
+
 	private long expires_on;
-	
+
 	/**
 	 * @return the scope
 	 */
 	public String getScope() {
 		return scope;
 	}
+
 	/**
-	 * @param scope the scope to set
+	 * @param scope
+	 *            the scope to set
 	 */
 	public void setScope(String scope) {
 		this.scope = scope;
 	}
+
 	/**
 	 * @return the access_token
 	 */
 	public String getAccess_token() {
 		return access_token;
 	}
+
 	/**
-	 * @param access_token the access_token to set
+	 * @param access_token
+	 *            the access_token to set
 	 */
 	public void setAccess_token(String access_token) {
 		this.access_token = access_token;
 	}
+
 	/**
 	 * @return the token_type
 	 */
 	public String getToken_type() {
 		return token_type;
 	}
+
 	/**
-	 * @param token_type the token_type to set
+	 * @param token_type
+	 *            the token_type to set
 	 */
 	public void setToken_type(String token_type) {
 		this.token_type = token_type;
 	}
+
 	/**
 	 * @return the refresh_token
 	 */
 	public String getRefresh_token() {
 		return refresh_token;
 	}
+
 	/**
-	 * @param refresh_token the refresh_token to set
+	 * @param refresh_token
+	 *            the refresh_token to set
 	 */
 	public void setRefresh_token(String refresh_token) {
 		this.refresh_token = refresh_token;
 	}
+
 	/**
 	 * @return the expires_in
 	 */
 	public int getExpires_in() {
 		return expires_in;
 	}
+
 	/**
-	 * @param expires_in the expires_in to set
+	 * @param expires_in
+	 *            the expires_in to set
 	 */
 	public void setExpires_in(int expires_in) {
 		this.expires_in = expires_in;
-		this.expires_on = System.currentTimeMillis() + 1000*expires_in;
+		this.expires_on = System.currentTimeMillis() + 1000 * expires_in;
 	}
-	
+
 	/**
 	 * @return the expires_on
 	 */
 	public long getExpires_on() {
 		return expires_on;
 	}
+
 	/**
 	 * @param response
 	 * @return
 	 */
 	public static TokenData valueOf(String response) {
-    	try {
+		try {
 			JSONObject json = new JSONObject(response);
-    		TokenData data = new  TokenData();
-			data.refresh_token = json.getString("refresh_token");
+			TokenData data = new TokenData();
+			if (json.has("refresh_token"))
+				data.refresh_token = json.getString("refresh_token");
 			data.access_token = json.getString("access_token");
 			data.expires_in = json.getInt("expires_in");
-			data.expires_on = System.currentTimeMillis() + 1000*data.expires_in;
-			data.scope = json.getString("scope");
+			data.expires_on = System.currentTimeMillis() + 1000
+					* data.expires_in;
+			if (json.has("scope"))
+				data.scope = json.getString("scope");
 			data.token_type = json.getString("token_type");
 			return data;
 		} catch (JSONException e) {
