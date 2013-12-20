@@ -16,7 +16,6 @@
 package eu.trentorise.smartcampus.aac;
 
 import java.net.URLEncoder;
-import java.util.Arrays;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,6 +28,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.springframework.util.StringUtils;
 
 import eu.trentorise.smartcampus.aac.model.TokenData;
 
@@ -104,7 +104,7 @@ public class AACService {
     		s += "&state="+state;
     	}
     	if (loginAuthorities != null) {
-    		s += "&authorities="+Arrays.toString(loginAuthorities);
+    		s += "&authorities="+StringUtils.arrayToCommaDelimitedString(loginAuthorities);
     	}
     	return s;
 	}
