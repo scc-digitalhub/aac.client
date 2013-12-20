@@ -16,6 +16,7 @@
 package eu.trentorise.smartcampus.aac;
 
 import java.net.URLEncoder;
+import java.util.Arrays;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -69,10 +70,29 @@ public class AACService {
      * @param authority if specified, specific IdP authority to call for authentication
      * @param scope call scope (may be null)
      * @param state state var (recommended but may be null)
+     * @param loginAuthorities autohrities to show on the login page (may be null)
+     * @return
+     */
+    public String generateAuthorizationURIForCodeFlow(String redirectUri, String authority, String scope, String state, String[] loginAuthorities) {
+    	return generateAuthorizationURI(redirectUri, authority, scope, state, loginAuthorities);
+    }
+
+    /**
+     * The method generates an authorization URL for SC given the parameters
+     * @param redirectUri redirect URI to redirect the authorization code to
+     * @param authority if specified, specific IdP authority to call for authentication
+     * @param scope call scope (may be null)
+     * @param state state var (recommended but may be null)
      * @return
      */
     public String generateAuthorizationURIForCodeFlow(String redirectUri, String authority, String scope, String state) {
-    	String s = aacURL + AUTH_PATH;
+    	return generateAuthorizationURI(redirectUri, authority, scope, state, null);
+    }
+
+	private String generateAuthorizationURI(String redirectUri,
+			String authority, String scope, String state,
+			String[] loginAuthorities) {
+		String s = aacURL + AUTH_PATH;
     	if (authority != null && !authority.trim().isEmpty()) {
     		s += authority;
     	}
@@ -83,8 +103,11 @@ public class AACService {
     	if (state != null && !state.trim().isEmpty()) {
     		s += "&state="+state;
     	}
+    	if (loginAuthorities != null) {
+    		s += "&authorities="+Arrays.toString(loginAuthorities);
+    	}
     	return s;
-    }
+	}
     
 
 	/**
@@ -113,9 +136,33 @@ public class AACService {
         } catch (final Exception e) {
             throw new AACException(e);
         }
-
 	}
 
+	/**
+	 * Generate client access token for the current application.
+	 * @return
+	 * @throws AACException
+	 */
+	public TokenData generateClientToken() throws AACException {
+        final HttpResponse resp;
+        final HttpEntity entity = null;
+        String url = aacURL + PATH_TOKEN+"?grant_type=client_credentials&client_id="+clientId +"&client_secret="+clientSecret;
+        final HttpPost post = new HttpPost(url);
+        post.setEntity(entity);
+        post.setHeader("Accept", "application/json");
+        try {
+            resp = getHttpClient().execute(post);
+            final String response = EntityUtils.toString(resp.getEntity());
+            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            	TokenData data = TokenData.valueOf(response);
+                return data;
+            }
+            throw new AACException("Error validating " + resp.getStatusLine());
+        } catch (final Exception e) {
+            throw new AACException(e);
+        }
+	}
+	
 	/**
 	 * Refresh the user access token
 	 * 
