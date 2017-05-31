@@ -119,14 +119,18 @@ public class TokenData {
 		try {
 			JSONObject json = new JSONObject(response);
 			TokenData data = new TokenData();
-			if (json.has("refresh_token"))
+			if (json.has("refresh_token")) {
 				data.refresh_token = json.getString("refresh_token");
+			}
 			data.access_token = json.getString("access_token");
-			data.expires_in = json.getInt("expires_in");
-			data.expires_on = System.currentTimeMillis() + 1000
-					* data.expires_in;
-			if (json.has("scope"))
+			if (json.has("expires_in")) {
+				data.expires_in = json.getInt("expires_in");
+				data.expires_on = System.currentTimeMillis() + 1000
+						* data.expires_in;				
+			}
+			if (json.has("scope")) {
 				data.scope = json.getString("scope");
+			}
 			data.token_type = json.getString("token_type");
 			return data;
 		} catch (JSONException e) {
