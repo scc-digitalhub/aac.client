@@ -127,10 +127,10 @@ public class AACRoleService {
 		}
 	}	
 	
-	public Set<Role> getTenantRoles(String token, String userId) throws SecurityException, AACException {
+	public Set<Role> getRoles(String token, String userId) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
-	        String url = aacURL + "userroles/tenant/user/" + userId;
+	        String url = aacURL + "userroles/user/" + userId;
 	        final HttpGet get = new HttpGet(url);
 	        get.setHeader("Accept", "application/json");
 	        get.setHeader("Authorization", "Bearer " + token);
