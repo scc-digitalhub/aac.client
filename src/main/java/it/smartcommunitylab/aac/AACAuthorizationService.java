@@ -9,7 +9,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.springframework.http.HttpEntity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,6 +40,7 @@ public class AACAuthorizationService {
 	        String url = aacURL + "authorization/" + domain + "/" + id;
 	        final HttpDelete delete = new HttpDelete(url);
 	        delete.setHeader("Accept", "application/json");
+	        delete.setHeader("Content-Type", "application/json");
 	        delete.setHeader("Authorization", "Bearer " + token);
 	        try {
 	            resp = getHttpClient().execute(delete);
@@ -63,6 +63,7 @@ public class AACAuthorizationService {
 		        String url = aacURL + "authorization/" + domain;
 		        final HttpPost post = new HttpPost(url);
 		        post.setHeader("Accept", "application/json");
+		        post.setHeader("Content-Type", "application/json");
 		        post.setHeader("Authorization", "Bearer " + token);
 		        post.setEntity(new StringEntity(mapper.writeValueAsString(authorization), "UTF-8"));
 		        try {
@@ -90,6 +91,7 @@ public class AACAuthorizationService {
 	        String url = aacURL + "authorization/" + domain + "/validate";
 	        final HttpPost post = new HttpPost(url);
 	        post.setHeader("Accept", "application/json");
+	        post.setHeader("Content-Type", "application/json");
 	        post.setHeader("Authorization", "Bearer " + token);
 	        post.setEntity(new StringEntity(mapper.writeValueAsString(authorization), "UTF-8"));
 	        try {
@@ -115,6 +117,7 @@ public class AACAuthorizationService {
 	        String url = aacURL + "authorization/" + domain + "/schema";
 	        final HttpPost post = new HttpPost(url);
 	        post.setHeader("Accept", "application/json");
+	        post.setHeader("Content-Type", "application/json");
 	        post.setHeader("Authorization", "Bearer " + token);
 	        post.setEntity(new StringEntity(mapper.writeValueAsString(node), "UTF-8"));
 	        try {
@@ -140,6 +143,7 @@ public class AACAuthorizationService {
 	        String url = aacURL + "authorization/" + domain + "/schema/" + parentQname ;
 	        final HttpPost post = new HttpPost(url);
 	        post.setHeader("Accept", "application/json");
+	        post.setHeader("Content-Type", "application/json");
 	        post.setHeader("Authorization", "Bearer " + token);
 	        post.setEntity(new StringEntity(mapper.writeValueAsString(childNode), "UTF-8"));
 	        try {
@@ -165,6 +169,7 @@ public class AACAuthorizationService {
 	        String url = aacURL + "authorization/" + domain + "/schema/" + qname ;
 	        final HttpGet get = new HttpGet(url);
 	        get.setHeader("Accept", "application/json");
+	        get.setHeader("Content-Type", "application/json");
 	        get.setHeader("Authorization", "Bearer " + token);
 	        try {
 	            resp = getHttpClient().execute(get);
@@ -190,6 +195,7 @@ public class AACAuthorizationService {
 	        String url = aacURL + "authorization/" + domain + "/validate";
 	        final HttpPost post = new HttpPost(url);
 	        post.setHeader("Accept", "application/json");
+	        post.setHeader("Content-Type", "application/json");
 	        post.setHeader("Authorization", "Bearer " + token);
 	        post.setEntity(new StringEntity(mapper.writeValueAsString(resource), "UTF-8"));
 	        try {
@@ -208,14 +214,15 @@ public class AACAuthorizationService {
 	}
 	
 	//@RequestMapping(value = "/authorization/{domain}/schema/load", method = RequestMethod.POST)
-	public void loadSchema(String token, String domain, HttpEntity<String> httpEntity) throws SecurityException, AACException {
+	public void loadSchema(String token, String domain, String content) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "authorization/" + domain + "/schema/load";
 	        final HttpPost post = new HttpPost(url);
 	        post.setHeader("Accept", "application/json");
+	        post.setHeader("Content-Type", "application/json");
 	        post.setHeader("Authorization", "Bearer " + token);
-	        post.setEntity(new StringEntity(mapper.writeValueAsString(httpEntity), "UTF-8"));
+	        post.setEntity(new StringEntity(content, "UTF-8"));
 	        try {
 	            resp = getHttpClient().execute(post);
 	            final String response = EntityUtils.toString(resp.getEntity());
