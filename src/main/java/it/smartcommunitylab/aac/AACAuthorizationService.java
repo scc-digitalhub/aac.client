@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationNodeDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationResourceDTO;
+import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 
 public class AACAuthorizationService {
 
@@ -85,7 +86,7 @@ public class AACAuthorizationService {
 
 
 	//@RequestMapping(value = "/authorization/{domain}/validate", method = RequestMethod.POST)
-	public boolean validateAuthorization(String token, String domain, AuthorizationDTO authorization) throws SecurityException, AACException {
+	public boolean validateAuthorization(String token, String domain, RequestedAuthorizationDTO authorization) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "authorization/" + domain + "/validate";

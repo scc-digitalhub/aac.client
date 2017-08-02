@@ -18,6 +18,7 @@ import it.smartcommunitylab.aac.AACProfileService;
 import it.smartcommunitylab.aac.AACRoleService;
 import it.smartcommunitylab.aac.AACService;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
+import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.aac.model.AccountProfiles;
 import it.smartcommunitylab.aac.model.BasicProfile;
@@ -136,8 +137,8 @@ public class AACTest {
 		authService.insertAuthorization(clientToken, TEST, auth);
 		
 		json = Resources.toString(Resources.getResource("validate.json"), Charsets.UTF_8);
-		auth = mapper.readValue(json, AuthorizationDTO.class);		
-		boolean res = authService.validateAuthorization(clientToken, TEST, auth);
+		RequestedAuthorizationDTO reqAuth = mapper.readValue(json, RequestedAuthorizationDTO.class);		
+		boolean res = authService.validateAuthorization(clientToken, TEST, reqAuth);
 		System.err.println(res);
 		
 		roleService.deleteRoles(clientToken, profile.getUserId(), Lists.newArrayList(AUTHORIZATION_TEST));
