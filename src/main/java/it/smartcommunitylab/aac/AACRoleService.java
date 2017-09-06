@@ -127,7 +127,7 @@ public class AACRoleService {
 		}
 	}	
 	
-	public Set<Role> getRoles(String token, String userId) throws SecurityException, AACException {
+	public Set<Role> getRolesByUserId(String token, String userId) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/user/" + userId;
@@ -150,6 +150,54 @@ public class AACRoleService {
 			throw new AACException(e);
 		}
 	}		
+	
+	public Set<Role> getRolesByClientId(String token, String clientId) throws SecurityException, AACException {
+		try {
+	        final HttpResponse resp;
+	        String url = aacURL + "userroles/client/" + clientId;
+	        final HttpGet get = new HttpGet(url);
+	        get.setHeader("Accept", "application/json");
+	        get.setHeader("Authorization", "Bearer " + token);
+	        try {
+	            resp = getHttpClient().execute(get);
+	            final String response = EntityUtils.toString(resp.getEntity());
+	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            	List data = mapper.readValue(response, List.class);
+	            	Set<Role> result = (Set<Role>) data.stream().map(x -> mapper.convertValue(x, Role.class)).collect(Collectors.toSet());
+	                return result;
+	            }
+	            throw new AACException("Error in userroles/tenant/user " + resp.getStatusLine());
+	        } catch (final Exception e) {
+	            throw new AACException(e);
+	        }
+		} catch (Exception e) {
+			throw new AACException(e);
+		}
+	}
+	
+	public Set<Role> getRolesByToken(String token, String clientToken) throws SecurityException, AACException {
+		try {
+	        final HttpResponse resp;
+	        String url = aacURL + "userroles/token/" + clientToken;
+	        final HttpGet get = new HttpGet(url);
+	        get.setHeader("Accept", "application/json");
+	        get.setHeader("Authorization", "Bearer " + token);
+	        try {
+	            resp = getHttpClient().execute(get);
+	            final String response = EntityUtils.toString(resp.getEntity());
+	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            	List data = mapper.readValue(response, List.class);
+	            	Set<Role> result = (Set<Role>) data.stream().map(x -> mapper.convertValue(x, Role.class)).collect(Collectors.toSet());
+	                return result;
+	            }
+	            throw new AACException("Error in userroles/tenant/user " + resp.getStatusLine());
+	        } catch (final Exception e) {
+	            throw new AACException(e);
+	        }
+		} catch (Exception e) {
+			throw new AACException(e);
+		}
+	}
 	
 	public Set<Role> getClientRoles(String token) throws SecurityException, AACException {
 		try {

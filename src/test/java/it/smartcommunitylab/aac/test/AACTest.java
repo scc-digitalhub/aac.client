@@ -112,7 +112,7 @@ public class AACTest {
 		roles = roleService.getAllRoles(clientToken, profile.getUserId());
 		Assert.assertEquals(rolesN, roles.size());		
 		
-		roles = roleService.getRoles(clientToken, profile.getUserId());
+		roles = roleService.getRolesByUserId(clientToken, profile.getUserId());
 		Assert.assertEquals(1, roles.size());			
 		
 		roles = roleService.getClientRoles(clientToken);
