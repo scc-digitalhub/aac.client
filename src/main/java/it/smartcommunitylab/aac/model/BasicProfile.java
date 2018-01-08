@@ -15,14 +15,13 @@
  ******************************************************************************/
 package it.smartcommunitylab.aac.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 public class BasicProfile {
 	
 	private String name;
 	private String surname;
 	
 	private String userId;
+	private String username;
 
 	public String getName() {
 		return name;
@@ -47,4 +46,13 @@ public class BasicProfile {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 }
