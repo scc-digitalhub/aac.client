@@ -26,8 +26,6 @@ public class AACRoleService {
 
     /**
      * @param aacURL URL of the AAC service
-     * @param clientId 
-     * @param clientSecret
      */
 	public AACRoleService(String aacURL) {
 		super();

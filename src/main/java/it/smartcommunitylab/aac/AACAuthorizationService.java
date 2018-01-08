@@ -25,8 +25,6 @@ public class AACAuthorizationService {
 	
     /**
      * @param aacURL URL of the AAC service
-     * @param clientId 
-     * @param clientSecret
      */
 	public AACAuthorizationService(String aacURL) {
 		super();

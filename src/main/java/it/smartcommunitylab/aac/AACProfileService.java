@@ -25,8 +25,6 @@ public class AACProfileService {
 
     /**
      * @param aacURL URL of the AAC service
-     * @param clientId 
-     * @param clientSecret
      */
 	public AACProfileService(String aacURL) {
 		super();
