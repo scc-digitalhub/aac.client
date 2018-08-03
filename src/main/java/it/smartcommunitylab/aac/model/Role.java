@@ -13,28 +13,24 @@ public class Role implements Serializable {
 	public static final String R_USER = "ROLE_USER";
 	/** Predefined system role ADMIN */
 	public static final String R_ADMIN = "ROLE_ADMIN";	
-	
 
 	private Long id;
-
-	private ROLE_SCOPE scope;
-	private String role;
+	
 	private String context;
+	private String space;
+	private String role;
 	
 	private String authority;
 
 	public Role() {
-	}
-	
-	public Role(ROLE_SCOPE scope, String role, String context) {
 		super();
-		this.scope = scope;
-		this.role = role;
-		this.context = context;
 	}
-	
-	public static Role systemUser() {
-		return new Role(ROLE_SCOPE.system, R_USER, null);
+
+	public Role(String context, String space, String role) {
+		super();
+		this.context = context;
+		this.space = space;
+		this.role = role;
 	}
 
 
@@ -46,12 +42,20 @@ public class Role implements Serializable {
 		this.id = id;
 	}
 
-	public ROLE_SCOPE getScope() {
-		return scope;
+	public String getContext() {
+		return context;
 	}
 
-	public void setScope(ROLE_SCOPE scope) {
-		this.scope = scope;
+	public void setContext(String context) {
+		this.context = context;
+	}
+
+	public String getSpace() {
+		return space;
+	}
+
+	public void setSpace(String space) {
+		this.space = space;
 	}
 
 	public String getRole() {
@@ -62,14 +66,11 @@ public class Role implements Serializable {
 		this.role = role;
 	}
 
-	public String getContext() {
-		return context;
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", context=" + context + ", space=" + space + ", role=" + role + "]";
 	}
-
-	public void setContext(String context) {
-		this.context = context;
-	}
-
+	
 	public String getAuthority() {
 		return authority;
 	}
@@ -78,13 +79,14 @@ public class Role implements Serializable {
 		this.authority = authority;
 	}
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((context == null) ? 0 : context.hashCode());
 		result = prime * result + ((role == null) ? 0 : role.hashCode());
-		result = prime * result + ((scope == null) ? 0 : scope.hashCode());
+		result = prime * result + ((space == null) ? 0 : space.hashCode());
 		return result;
 	}
 
@@ -102,33 +104,17 @@ public class Role implements Serializable {
 				return false;
 		} else if (!context.equals(other.context))
 			return false;
-		if (!role.equals(other.role))
+		if (role == null) {
+			if (other.role != null)
+				return false;
+		} else if (!role.equals(other.role))
 			return false;
-		if (!scope.equals(other.scope))
+		if (space == null) {
+			if (other.space != null)
+				return false;
+		} else if (!space.equals(other.space))
 			return false;
 		return true;
 	}
-	
-	@Override
-	public String toString() {
-		return scope + " " + role + (context == null ? "" : " - " + context) + " [" + id + "]";
-	}
-
-	public enum ROLE_SCOPE {
-		system ("SCOPE_SYSTEM"), 
-		application ("SCOPE_APPLICATION"),
-		tenant ("SCOPE_TENANT"),
-		user ("SCOPE_USER");
-		
-		private final String scopeName;
-
-		private ROLE_SCOPE(String scopeName) {
-			this.scopeName = scopeName;
-		}
-		
-		public String scopeName(){
-			return scopeName;
-		}
-	};	
 	
 }

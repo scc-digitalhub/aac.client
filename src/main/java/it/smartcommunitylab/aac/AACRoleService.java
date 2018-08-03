@@ -101,30 +101,6 @@ public class AACRoleService {
 	
 	}	
 	
-	public Set<Role> getAllRoles(String token, String userId) throws SecurityException, AACException {
-		try {
-	        final HttpResponse resp;
-	        String url = aacURL + "userroles/all/user/" + userId;
-	        final HttpGet get = new HttpGet(url);
-	        get.setHeader("Accept", "application/json");
-	        get.setHeader("Authorization", "Bearer " + token);
-	        try {
-	            resp = getHttpClient().execute(get);
-	            final String response = EntityUtils.toString(resp.getEntity());
-	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            	List data = mapper.readValue(response, List.class);
-	            	Set<Role> result = (Set<Role>) data.stream().map(x -> mapper.convertValue(x, Role.class)).collect(Collectors.toSet());
-	                return result;
-	            }
-	            throw new AACException("Error in userroles/all/user " + resp.getStatusLine());
-	        } catch (final Exception e) {
-	            throw new AACException(e);
-	        }
-		} catch (Exception e) {
-			throw new AACException(e);
-		}
-	}	
-	
 	public Set<Role> getRolesByUserId(String token, String userId) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;

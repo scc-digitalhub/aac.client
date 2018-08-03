@@ -32,7 +32,7 @@ public class AACTest {
 	private static final String AUTHORIZATION_TEST = "authorization_" + TEST;
 	private String aacURL = "http://localhost:8080/aac";
 	private String clientId = "API_MGT_CLIENT_ID";
-	private String clientSecret = "06992236-24e3-421e-a569-d036bac564f7";	
+	private String clientSecret = "86ed3837-d55b-4ad5-8a7c-d3e591bd692b";	
 	
 	AACService aacService;
 	AACProfileService profileService;
@@ -88,7 +88,7 @@ public class AACTest {
 		Assert.assertNotNull(accountProfile);				
 	}	
 	
-//	@Test
+	@Test
 	public void testRoleUser() throws Exception {
 		String clientToken = aacService.generateClientToken("profile.basicprofile.all profile.accountprofile.all user.roles.write user.roles.read.all user.roles.read client.roles.read.all").getAccess_token();
 		
@@ -101,19 +101,17 @@ public class AACTest {
 		Set<Role> roles = roleService.getRoles(userToken);
 		int rolesN = roles.size();
 		
-		roleService.addRoles(clientToken, profile.getUserId(), Lists.newArrayList("testrole"));
+		roleService.addRoles(clientToken, profile.getUserId(), Lists.newArrayList("apimanager/carbon.super:testrole"));
 		roles = roleService.getRoles(userToken);
 		Assert.assertEquals(rolesN + 1, roles.size());		
 		
-		roleService.deleteRoles(clientToken, profile.getUserId(), Lists.newArrayList("testrole"));
+		roleService.deleteRoles(clientToken, profile.getUserId(), Lists.newArrayList("apimanager/carbon.super:testrole"));
 		roles = roleService.getRoles(userToken);
 		Assert.assertEquals(rolesN, roles.size());		
 		
-		roles = roleService.getAllRoles(clientToken, profile.getUserId());
-		Assert.assertEquals(rolesN, roles.size());		
-		
+		// should return one role less
 		roles = roleService.getRolesByUserId(clientToken, profile.getUserId());
-		Assert.assertEquals(1, roles.size());			
+		Assert.assertEquals(rolesN - 1, roles.size());			
 		
 		roles = roleService.getClientRoles(clientToken);
 		Assert.assertEquals(rolesN, roles.size());			
