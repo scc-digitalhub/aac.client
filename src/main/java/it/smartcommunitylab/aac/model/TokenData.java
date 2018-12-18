@@ -24,6 +24,8 @@ public class TokenData {
 	private String access_token;
 	private String token_type;
 	private String refresh_token;
+	private String id_token;
+
 	private int expires_in;
 
 	private long expires_on;
@@ -112,6 +114,20 @@ public class TokenData {
 	}
 
 	/**
+	 * @return the id_token
+	 */
+	public String getId_token() {
+		return id_token;
+	}
+
+	/**
+	 * @param id_token the id_token to set
+	 */
+	public void setId_token(String id_token) {
+		this.id_token = id_token;
+	}
+
+	/**
 	 * @param response
 	 * @return
 	 */
@@ -132,6 +148,7 @@ public class TokenData {
 				data.scope = json.getString("scope");
 			}
 			data.token_type = json.getString("token_type");
+			data.id_token = json.getString("id_token");
 			return data;
 		} catch (JSONException e) {
 			return null;

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,10 +27,13 @@ import it.smartcommunitylab.aac.model.BasicProfiles;
 import it.smartcommunitylab.aac.model.Role;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@Ignore
 public class AACTest {
 
+	private static final String USERNAME = "admin";
+	private static final String PWD = "admin";
 	private static final String TEST = "cartellastudente"; 
-	private static final String AUTHORIZATION_TEST = "authorization_" + TEST;
+	private static final String AUTHORIZATION_TEST = "authorization:" + TEST;
 	private String aacURL = "http://localhost:8080/aac";
 	private String clientId = "API_MGT_CLIENT_ID";
 	private String clientSecret = "86ed3837-d55b-4ad5-8a7c-d3e591bd692b";	
@@ -49,12 +53,12 @@ public class AACTest {
 		authService = new AACAuthorizationService(aacURL);
 	}
 
-//	@Test
-//	public void test() throws Exception {
-//		aacService.generateUserToken("admin", "admin", null);
-//	}
+	@Test
+	public void test() throws Exception {
+		aacService.generateUserToken(USERNAME, PWD, null);
+	}
 	
-//	@Test
+	@Test
 	public void testProfileClient() throws Exception {
 		String clientToken = aacService.generateClientToken("profile.basicprofile.all profile.accountprofile.all").getAccess_token();
 		
@@ -69,13 +73,13 @@ public class AACTest {
 		Assert.assertEquals(1, accountProfiles.getProfiles().size());		
 	}
 	
-//	@Test
+	@Test
 	public void testProfileUser() throws Exception {
-		String userToken = aacService.generateUserToken("admin", "admin", "profile.basicprofile.all profile.basicprofile.me profile.accountprofile.me").getAccess_token();
+		String userToken = aacService.generateUserToken(USERNAME, PWD, "profile.basicprofile.all profile.basicprofile.me profile.accountprofile.me").getAccess_token();
 		String clientToken = aacService.generateClientToken("profile.basicprofile.all").getAccess_token();
 		
 		BasicProfiles basicProfiles = profileService.searchUsers(clientToken);		
-		BasicProfile profile = basicProfiles.getProfiles().stream().filter(x -> "admin".equals(x.getName())).findFirst().get();
+		BasicProfile profile = basicProfiles.getProfiles().stream().filter(x -> USERNAME.equals(x.getName())).findFirst().get();
 		
 		BasicProfile basicProfile = profileService.getUser(userToken, profile.getUserId());
 		Assert.assertNotNull(basicProfile);
@@ -96,7 +100,7 @@ public class AACTest {
 		Assert.assertNotEquals(0, basicProfiles.getProfiles().size());
 		BasicProfile profile = basicProfiles.getProfiles().get(0);		
 		
-		String userToken = aacService.generateUserToken("admin", "admin", "user.roles.me").getAccess_token();
+		String userToken = aacService.generateUserToken(USERNAME, PWD, "user.roles.me").getAccess_token();
 		
 		Set<Role> roles = roleService.getRoles(userToken);
 		int rolesN = roles.size();
