@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,8 +28,7 @@ import it.smartcommunitylab.aac.model.TokenData;
 import it.smartcommunitylab.aac.model.authorization.AuthorizationDTO;
 import it.smartcommunitylab.aac.model.authorization.RequestedAuthorizationDTO;
 
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@Ignore
+@Ignore
 public class AACTest {
 
 	private static final String USERNAME = "admin";
