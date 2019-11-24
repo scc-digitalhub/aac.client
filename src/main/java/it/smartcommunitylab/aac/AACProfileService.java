@@ -95,7 +95,7 @@ public class AACProfileService {
 	            	BasicProfile data = mapper.readValue(response, BasicProfile.class);
 	                return data;
 	            }
-	            throw new AACException("Error in basicprofile/all " + resp.getStatusLine());
+                throw new AACException("Error in basicprofile/me " + resp.getStatusLine());
 	        } catch (final Exception e) {
 	            throw new AACException(e);
 	        }

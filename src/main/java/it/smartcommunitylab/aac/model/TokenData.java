@@ -142,13 +142,15 @@ public class TokenData {
 			if (json.has("expires_in")) {
 				data.expires_in = json.getInt("expires_in");
 				data.expires_on = System.currentTimeMillis() + 1000
-						* data.expires_in;				
+						* data.expires_in;
 			}
 			if (json.has("scope")) {
 				data.scope = json.getString("scope");
 			}
-			data.token_type = json.getString("token_type");
-			if (json.has("id_token")) data.id_token = json.getString("id_token");
+			if (json.has("token_type"))
+				data.token_type = json.getString("token_type");
+			if (json.has("id_token"))
+				data.id_token = json.getString("id_token");
 			return data;
 		} catch (JSONException e) {
 			return null;
