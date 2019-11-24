@@ -17,20 +17,20 @@ package it.smartcommunitylab.aac;
 
 import java.net.URLEncoder;
 import java.util.Base64;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
+
+import it.smartcommunitylab.aac.model.AACTokenIntrospection;
 import it.smartcommunitylab.aac.model.TokenData;
 
 /**
@@ -47,10 +47,10 @@ public class AACService {
 	private static final String PATH_TOKEN = "oauth/token";
     /** address of the authorization endpoint */
 	private static final String AUTH_PATH = "eauth/authorize";
-    /** resource access validation endpoint */
-	private static final String RESOURCE_TOKEN = "resources/access?scope=%s";
-	/** Timeout (in ms) we specify for each http request */
-    public static final int HTTP_REQUEST_TIMEOUT_MS = 30 * 1000;
+    /** address of the token introspection endpoint */
+	private static final String PATH_INTROSPECTION = "token_introspection";
+    /** address of the userinfo endpoint */
+	private static final String PATH_USERINFO = "userinfo";
 
     /**
      * @param aacURL URL of the AAC service
@@ -105,7 +105,7 @@ public class AACService {
     		s += "&state="+state;
     	}
     	if (loginAuthorities != null) {
-    		s += "&authorities="+StringUtils.arrayToCommaDelimitedString(loginAuthorities);
+    		s += "&authorities="+Joiner.on(",").join(loginAuthorities);
     	}
     	return s;
 	}
@@ -228,34 +228,66 @@ public class AACService {
 			throw new AACException(e);
 		}
 	}
-
+	
 	/**
-	 * Check whether the specified token is applicable for the given
-	 * scope
+	 * Read token introspection data using the RFC7662 token_introspection endpoint
 	 * @param token
-	 * @param scope comma-separated list of scope values
-	 * @return true if the user/client associated with the token has granted the required permissions
-	 * @throws AACException 
+	 * @return
+	 * @throws AACException
 	 */
-	public boolean isTokenApplicable(String token, String scope) throws AACException {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public AACTokenIntrospection tokenInfo(String token) throws AACException {
 		try {
-			String sentToken = token;
-			if (!token.toLowerCase().startsWith("bearer")) {
-				sentToken = "Bearer "+token;
-			}
-
 	        final HttpResponse resp;
-	        String url = aacURL + String.format(RESOURCE_TOKEN, URLEncoder.encode(scope,"utf8"));
-	        final HttpGet get = new HttpGet(url);
-	        get.setHeader("Accept", "application/json");
-	        get.setHeader("Authorization", sentToken);
+	        final HttpEntity entity = null;
+	        String url = aacURL + PATH_INTROSPECTION+"?token="+token;
+	        final HttpPost post = new HttpPost(url);
+	        post.setEntity(entity);
+	        post.setHeader("Accept", "application/json");
+	        String basic = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
+	        post.setHeader("Authorization", "Basic " + basic);
 	        try {
-	            resp = getHttpClient().execute(get);
+	            resp = getHttpClient().execute(post);
 	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            	return Boolean.parseBoolean(response);
+	            	ObjectMapper mapper = new ObjectMapper();
+	            	Map map = mapper.readValue(response, Map.class);
+	            	return new AACTokenIntrospection(map);
 	            }
-	            throw new AACException("Error validating resource " + resp.getStatusLine());
+	            throw new AACException("Error validating " + resp.getStatusLine());
+	        } catch (final Exception e) {
+	            throw new AACException(e);
+	        }
+		} catch (Exception e) {
+			throw new AACException(e);
+		}
+	}
+	
+	/**
+	 * Read user info of OpenID Connect user info endpoint
+	 * @param token
+	 * @return
+	 * @throws AACException
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Map<String, Object> userInfo(String token) throws AACException {
+		try {
+	        final HttpResponse resp;
+	        final HttpEntity entity = null;
+	        String url = aacURL + PATH_USERINFO;
+	        final HttpPost post = new HttpPost(url);
+	        post.setEntity(entity);
+	        post.setHeader("Accept", "application/json");
+	        post.setHeader("Authorization", "Bearer " + token);
+	        try {
+	            resp = getHttpClient().execute(post);
+	            final String response = EntityUtils.toString(resp.getEntity());
+	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            	ObjectMapper mapper = new ObjectMapper();
+	            	Map map = mapper.readValue(response, Map.class);
+	            	return map;
+	            }
+	            throw new AACException("Error reading user info " + resp.getStatusLine());
 	        } catch (final Exception e) {
 	            throw new AACException(e);
 	        }
@@ -264,15 +296,9 @@ public class AACService {
 		}
 	}
 
-	protected static HttpClient getHttpClient() {
-		HttpClient httpClient = new DefaultHttpClient();
-		final HttpParams params = httpClient.getParams();
-		HttpConnectionParams.setConnectionTimeout(params,
-				HTTP_REQUEST_TIMEOUT_MS);
-		HttpConnectionParams.setSoTimeout(params, HTTP_REQUEST_TIMEOUT_MS);
-		ConnManagerParams.setTimeout(params, HTTP_REQUEST_TIMEOUT_MS);
-		return httpClient;
-	}
-
+    private HttpClient getHttpClient() {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        return httpClient;
+    }	
 	
 }

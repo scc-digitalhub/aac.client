@@ -12,10 +12,10 @@ import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationNodeDTO;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationResourceDTO;
-import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
+import it.smartcommunitylab.aac.model.authorization.AuthorizationDTO;
+import it.smartcommunitylab.aac.model.authorization.AuthorizationNodeDTO;
+import it.smartcommunitylab.aac.model.authorization.AuthorizationResourceDTO;
+import it.smartcommunitylab.aac.model.authorization.RequestedAuthorizationDTO;
 
 public class AACAuthorizationService {
 
@@ -121,7 +121,6 @@ public class AACAuthorizationService {
 	        post.setEntity(new StringEntity(mapper.writeValueAsString(node), "UTF-8"));
 	        try {
 	            resp = getHttpClient().execute(post);
-	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 	                return;
 	            }
@@ -147,7 +146,6 @@ public class AACAuthorizationService {
 	        post.setEntity(new StringEntity(mapper.writeValueAsString(childNode), "UTF-8"));
 	        try {
 	            resp = getHttpClient().execute(post);
-	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 	                return;
 	            }
@@ -224,7 +222,6 @@ public class AACAuthorizationService {
 	        post.setEntity(new StringEntity(content, "UTF-8"));
 	        try {
 	            resp = getHttpClient().execute(post);
-	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 	                return;
 	            }

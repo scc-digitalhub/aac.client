@@ -117,4 +117,61 @@ public class Role implements Serializable {
 		return true;
 	}
 	
+
+
+	public String canonicalSpace() {
+		StringBuilder sb = new StringBuilder();
+		if (!isEmpty(context)) {
+			sb.append(context);
+			sb.append('/');
+		}
+		if (!isEmpty(space)) {
+			sb.append(space);
+		}
+		return sb.toString();
+	}
+	/**
+	 * @param ctxStr
+	 * @return
+	 */
+	public static Role memberOf(String ctxStr, String role) {
+		int idx = ctxStr.lastIndexOf('/');
+		String ctx = idx > 0 ? ctxStr.substring(0,  idx) : null;
+		String space = idx > 0 ? ctxStr.substring(idx + 1) : ctxStr;
+		Role r = new Role(ctx, space, role);
+		validate(r);
+		return r;
+	}
+
+	/**
+	 * @param x
+	 * @return
+	 */
+	public static Role parse(String s) throws IllegalArgumentException {
+		s = s.trim();
+		int idx = s.lastIndexOf(':');
+		if (isEmpty(s) || idx == s.length() - 1) throw new IllegalArgumentException("Invalid Role format " + s);
+		if (idx <= 0) return new Role(null, null, s.substring(idx + 1));
+		return memberOf(s.substring(0, idx), s.substring(idx + 1));
+	}
+
+	public static void validate(Role r) throws IllegalArgumentException {
+		// context may be empty
+		if (r.context != null && !r.context.matches("[\\w\\-\\./]+")) {
+			throw new IllegalArgumentException("Invalid role context value: only alpha-numeric characters and '_-./' allowed");
+		};
+		// space empty only if context is empty
+		if (r.space == null && r.context != null || r.space != null && !r.space.matches("[\\w\\-\\.]+")) {
+			throw new IllegalArgumentException("Invalid role space value: only alpha-numeric characters and '_-.' allowed");
+		};
+		// role should never be empty
+		if (r.role == null || !r.role.matches("[\\w\\-\\.]+")) {
+			throw new IllegalArgumentException("Invalid role value: only alpha-numeric characters and '_-.' allowed");
+		};
+	}
+	
+	private static boolean isEmpty(String s) {
+		return s == null || s.trim().equals("");
+	}
+	
 }

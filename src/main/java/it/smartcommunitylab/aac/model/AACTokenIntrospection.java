@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012-2013 Trento RISE
+ * Copyright 2015 Fondazione Bruno Kessler
  * 
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -14,41 +14,47 @@
  *    limitations under the License.
  ******************************************************************************/
 
-package it.smartcommunitylab.aac.conf;
+package it.smartcommunitylab.aac.model;
 
-import it.smartcommunitylab.aac.model.TokenData;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Application token storage used to store the user tokens across the client sessions.
  * @author raman
  *
  */
-public interface TokenStore {
+public class AACTokenIntrospection extends TokenIntrospection {
+	
+	public AACTokenIntrospection(Map<String, Object> map) {
+		super(map);
+	}
+
+	public AACTokenIntrospection() {
+		super(new HashMap<>());
+	}
 
 	/**
-	 * Save the {@link TokenData} instance to the storage
-	 * @param data
+	 * @return the aac_user_id
 	 */
-	void StoreTokenData(TokenData data);
-	
+	public String getAac_user_id() {
+		return (String)data.get("aac_user_id");
+	}
 	/**
-	 * Delete the {@link TokenData} associated to the specified access token
-	 * @param accessToken
+	 * @return the aac_grantType
 	 */
-	void deleteTokenData(String accessToken);
-	
+	public String getAac_grantType() {
+		return (String)data.get("aac_grantType");
+	}
 	/**
-	 * Read the {@link TokenData} associated to the specified access token
-	 * @param accessToken
-	 * @return
+	 * @return the aac_applicationToken
 	 */
-	TokenData readTokenData(String accessToken);
-	
+	public Boolean getAac_applicationToken() {
+		return (Boolean)data.getOrDefault("aac_applicationToken", false);
+	}
 	/**
-	 * validate the access token.
-	 * @param accessToken
-	 * @return
+	 * @return the aac_am_tenant
 	 */
-	boolean validateToken(String accessToken);
-	
+	public String getAac_am_tenant() {
+		return (String)data.get("aac_am_tenant");
+	}
 }

@@ -1,4 +1,4 @@
-package it.smartcommunitylab.aac.authorization.beans;
+package it.smartcommunitylab.aac.model.authorization;
 
 public class RequestedAuthorizationDTO {
 	private AuthorizationResourceDTO resource;

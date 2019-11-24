@@ -148,7 +148,7 @@ public class TokenData {
 				data.scope = json.getString("scope");
 			}
 			data.token_type = json.getString("token_type");
-			data.id_token = json.getString("id_token");
+			if (json.has("id_token")) data.id_token = json.getString("id_token");
 			return data;
 		} catch (JSONException e) {
 			return null;

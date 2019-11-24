@@ -1,9 +1,8 @@
-package it.smartcommunitylab.aac.authorization.beans;
+package it.smartcommunitylab.aac.model.authorization;
 
-public class AuthorizationNodeValueDTO {
+public class AuthorizationNodeParamDTO {
 	private String qname;
 	private String name;
-	private String value;
 
 	public String getQname() {
 		return qname;
@@ -19,14 +18,6 @@ public class AuthorizationNodeValueDTO {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
 	}
 
 }

@@ -1,13 +1,12 @@
 package it.smartcommunitylab.aac.test;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
@@ -18,16 +17,18 @@ import it.smartcommunitylab.aac.AACAuthorizationService;
 import it.smartcommunitylab.aac.AACProfileService;
 import it.smartcommunitylab.aac.AACRoleService;
 import it.smartcommunitylab.aac.AACService;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
-import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
+import it.smartcommunitylab.aac.model.AACTokenIntrospection;
 import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.aac.model.AccountProfiles;
 import it.smartcommunitylab.aac.model.BasicProfile;
 import it.smartcommunitylab.aac.model.BasicProfiles;
 import it.smartcommunitylab.aac.model.Role;
+import it.smartcommunitylab.aac.model.TokenData;
+import it.smartcommunitylab.aac.model.authorization.AuthorizationDTO;
+import it.smartcommunitylab.aac.model.authorization.RequestedAuthorizationDTO;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@Ignore
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@Ignore
 public class AACTest {
 
 	private static final String USERNAME = "admin";
@@ -36,7 +37,7 @@ public class AACTest {
 	private static final String AUTHORIZATION_TEST = "authorization:" + TEST;
 	private String aacURL = "http://localhost:8080/aac";
 	private String clientId = "API_MGT_CLIENT_ID";
-	private String clientSecret = "86ed3837-d55b-4ad5-8a7c-d3e591bd692b";	
+	private String clientSecret = "";
 	
 	AACService aacService;
 	AACProfileService profileService;
@@ -55,7 +56,18 @@ public class AACTest {
 
 	@Test
 	public void test() throws Exception {
-		aacService.generateUserToken(USERNAME, PWD, null);
+		TokenData data = aacService.generateUserToken(USERNAME, PWD, "openid");
+		Assert.assertNotNull(data);
+		
+		AACTokenIntrospection intro = aacService.tokenInfo(data.getAccess_token());
+		Assert.assertNotNull(intro);
+		Assert.assertEquals(clientId, intro.getAud());
+		Assert.assertEquals(USERNAME, intro.getUsername());
+		
+		Map<String, Object> userInfo = aacService.userInfo(data.getAccess_token());
+		Assert.assertNotNull(userInfo);
+		Assert.assertEquals(USERNAME, userInfo.get("username"));
+		
 	}
 	
 	@Test
@@ -112,10 +124,12 @@ public class AACTest {
 		roleService.deleteRoles(clientToken, profile.getUserId(), Lists.newArrayList("apimanager/carbon.super:testrole"));
 		roles = roleService.getRoles(userToken);
 		Assert.assertEquals(rolesN, roles.size());		
+		Set<String> ownedSpaces = roles.stream().filter(r -> r.getRole().equals("ROLE_PROVIDER")).map(r -> r.canonicalSpace()).collect(Collectors.toSet());
+		long extraRoles = roles.stream().filter(r -> !ownedSpaces.contains(r.canonicalSpace())).count();
 		
-		// should return one role less
+		// should return roles minus roles in not owned spaces
 		roles = roleService.getRolesByUserId(clientToken, profile.getUserId());
-		Assert.assertEquals(rolesN - 1, roles.size());			
+		Assert.assertEquals(rolesN - extraRoles, roles.size());			
 		
 		roles = roleService.getClientRoles(clientToken);
 		Assert.assertEquals(rolesN, roles.size());			
