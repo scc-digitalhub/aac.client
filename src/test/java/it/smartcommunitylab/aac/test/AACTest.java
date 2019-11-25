@@ -25,6 +25,7 @@ import it.smartcommunitylab.aac.model.BasicProfile;
 import it.smartcommunitylab.aac.model.BasicProfiles;
 import it.smartcommunitylab.aac.model.Role;
 import it.smartcommunitylab.aac.model.TokenData;
+import it.smartcommunitylab.aac.model.User;
 import it.smartcommunitylab.aac.model.authorization.AuthorizationDTO;
 import it.smartcommunitylab.aac.model.authorization.RequestedAuthorizationDTO;
 
@@ -132,7 +133,10 @@ public class AACTest {
 		Assert.assertEquals(rolesN - extraRoles, roles.size());			
 		
 		roles = roleService.getClientRoles(clientToken);
-		Assert.assertEquals(rolesN, roles.size());			
+		Assert.assertEquals(rolesN, roles.size());		
+		
+		Set<User> users = roleService.getSpaceUsers("apimanager", null, 0, 10, clientToken);
+		Assert.assertNotEquals(0, users.size());
 	}	
 	
 	@Test
