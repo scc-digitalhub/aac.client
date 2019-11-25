@@ -96,7 +96,7 @@ public class Role implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof Role))
 			return false;
 		Role other = (Role) obj;
 		if (context == null) {
