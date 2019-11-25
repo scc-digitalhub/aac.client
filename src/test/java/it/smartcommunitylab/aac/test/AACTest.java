@@ -75,9 +75,12 @@ public class AACTest {
 	public void testProfileClient() throws Exception {
 		String clientToken = aacService.generateClientToken("profile.basicprofile.all profile.accountprofile.all").getAccess_token();
 		
-		BasicProfiles basicProfiles = profileService.searchUsers(clientToken);
+		BasicProfiles basicProfiles = profileService.searchUsersByUsername(clientToken, USERNAME);
 		Assert.assertNotEquals(0, basicProfiles.getProfiles().size());
 		BasicProfile profile = basicProfiles.getProfiles().get(0);
+		
+		basicProfiles = profileService.searchUsersByFullname(clientToken, USERNAME);
+		Assert.assertNotEquals(0, basicProfiles.getProfiles().size());
 		
 		basicProfiles = profileService.findProfiles(clientToken, Lists.newArrayList(profile.getUserId()));
 		Assert.assertEquals(1, basicProfiles.getProfiles().size());
@@ -91,8 +94,8 @@ public class AACTest {
 		String userToken = aacService.generateUserToken(USERNAME, PWD, "profile.basicprofile.all profile.basicprofile.me profile.accountprofile.me").getAccess_token();
 		String clientToken = aacService.generateClientToken("profile.basicprofile.all").getAccess_token();
 		
-		BasicProfiles basicProfiles = profileService.searchUsers(clientToken);		
-		BasicProfile profile = basicProfiles.getProfiles().stream().filter(x -> USERNAME.equals(x.getName())).findFirst().get();
+		BasicProfiles basicProfiles = profileService.searchUsersByUsername(clientToken, USERNAME);
+		BasicProfile profile = basicProfiles.getProfiles().get(0);
 		
 		BasicProfile basicProfile = profileService.getUser(userToken, profile.getUserId());
 		Assert.assertNotNull(basicProfile);
@@ -109,9 +112,9 @@ public class AACTest {
 	public void testRoleUser() throws Exception {
 		String clientToken = aacService.generateClientToken("profile.basicprofile.all profile.accountprofile.all user.roles.write user.roles.read.all user.roles.read client.roles.read.all").getAccess_token();
 		
-		BasicProfiles basicProfiles = profileService.searchUsers(clientToken);
+		BasicProfiles basicProfiles = profileService.searchUsersByUsername(clientToken, USERNAME);
 		Assert.assertNotEquals(0, basicProfiles.getProfiles().size());
-		BasicProfile profile = basicProfiles.getProfiles().get(0);		
+		BasicProfile profile = basicProfiles.getProfiles().get(0);
 		
 		String userToken = aacService.generateUserToken(USERNAME, PWD, "user.roles.me").getAccess_token();
 		
@@ -143,9 +146,9 @@ public class AACTest {
 	public void testAuthorization() throws Exception {
 		String clientToken = aacService.generateClientToken("profile.basicprofile.all user.roles.write authorization.manage authorization.schema.manage").getAccess_token();
 		
-		BasicProfiles basicProfiles = profileService.searchUsers(clientToken);
+		BasicProfiles basicProfiles = profileService.searchUsersByUsername(clientToken, USERNAME);
 		Assert.assertNotEquals(0, basicProfiles.getProfiles().size());
-		BasicProfile profile = basicProfiles.getProfiles().get(0);			
+		BasicProfile profile = basicProfiles.getProfiles().get(0);
 		
 		roleService.addRoles(clientToken, profile.getUserId(), Lists.newArrayList(AUTHORIZATION_TEST));
 		

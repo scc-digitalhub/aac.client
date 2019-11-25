@@ -34,10 +34,10 @@ public class AACProfileService {
 		}
 	}	
 	
-	public BasicProfiles searchUsers(String token) throws SecurityException, AACException {
+	public BasicProfiles searchUsersByUsername(String token, String username) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
-	        String url = aacURL + "basicprofile/all";
+	        String url = aacURL + "basicprofile/all?username="+username;
 	        final HttpGet get = new HttpGet(url);
 	        get.setHeader("Accept", "application/json");
 	        get.setHeader("Authorization", "Bearer " + token);
@@ -56,7 +56,28 @@ public class AACProfileService {
 			throw new AACException(e);
 		}
 	}	
-	
+	public BasicProfiles searchUsersByFullname(String token, String name) throws SecurityException, AACException {
+		try {
+	        final HttpResponse resp;
+	        String url = aacURL + "basicprofile/all?filter="+name;
+	        final HttpGet get = new HttpGet(url);
+	        get.setHeader("Accept", "application/json");
+	        get.setHeader("Authorization", "Bearer " + token);
+	        try {
+	            resp = getHttpClient().execute(get);
+	            final String response = EntityUtils.toString(resp.getEntity());
+	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	            	BasicProfiles data = mapper.readValue(response, BasicProfiles.class);
+	                return data;
+	            }
+	            throw new AACException("Error in basicprofile/all " + resp.getStatusLine());
+	        } catch (final Exception e) {
+	            throw new AACException(e);
+	        }
+		} catch (Exception e) {
+			throw new AACException(e);
+		}
+	}
 	
 	public BasicProfiles findProfiles(String token, List<String> userIds) throws SecurityException, AACException {
 		try {
