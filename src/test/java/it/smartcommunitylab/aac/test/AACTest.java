@@ -138,7 +138,11 @@ public class AACTest {
 		roles = roleService.getClientRoles(clientToken);
 		Assert.assertEquals(rolesN, roles.size());		
 		
-		Set<User> users = roleService.getSpaceUsers("apimanager", null, 0, 10, clientToken);
+		Set<User> users = roleService.getSpaceUsers("components/apimanager/carbon.super", null, false, 0, 10, clientToken);
+		Assert.assertEquals(1, users.size());
+		Assert.assertEquals(4, users.iterator().next().getRoles().size());
+		
+		users = roleService.getSpaceUsers("components/apimanager", null, true, 0, 10, clientToken);
 		Assert.assertNotEquals(0, users.size());
 	}	
 	

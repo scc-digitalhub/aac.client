@@ -174,13 +174,14 @@ public class AACRoleService {
 		}
 	}
 
-	public Set<User> getSpaceUsers(String context, String role, Integer offset, Integer limit, String clientToken) throws SecurityException, AACException {
+	public Set<User> getSpaceUsers(String context, String role, boolean nested, Integer offset, Integer limit, String clientToken) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/role?context="+context;
 	        if (role != null) url += "&role="+role;
 	        if (offset != null) url += "&offset=" +offset;
 	        if (limit != null) url += "&limit=" + limit;
+	        if (nested) url += "&nested=true";
 	        final HttpGet get = new HttpGet(url);
 	        get.setHeader("Accept", "application/json");
 	        get.setHeader("Authorization", "Bearer " + clientToken);
