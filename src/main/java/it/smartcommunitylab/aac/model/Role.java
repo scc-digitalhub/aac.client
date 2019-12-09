@@ -72,6 +72,19 @@ public class Role implements Serializable {
 	}
 	
 	public String getAuthority() {
+		if (authority == null) {
+			StringBuilder sb = new StringBuilder();
+			if (!isEmpty(context)) {
+				sb.append(context);
+				sb.append('/');
+			}
+			if (!isEmpty(space)) {
+				sb.append(space);
+				sb.append(':');
+			}
+			sb.append(role);
+			authority = sb.toString();
+		}
 		return authority;
 	}
 
