@@ -17,6 +17,7 @@
 package it.smartcommunitylab.aac.model;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -107,7 +108,15 @@ public class TokenIntrospection {
 	/**
 	 * @return the aud
 	 */
-	public String getAud() {
-		return (String)data.get("aud");
+	@SuppressWarnings("unchecked")
+	public String[] getAud() {
+		return 
+				  data.get("aud") == null 
+				? new String[]{}
+				: (data.get("aud") instanceof List)
+				? ((List<String>) data.get("aud")).toArray(new String[0]) 
+				: (data.get("aud") instanceof String[])
+				? (String[])data.get("aud")
+				: new String[] {data.get("aud").toString()};
 	}
 }

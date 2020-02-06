@@ -18,12 +18,17 @@ import it.smartcommunitylab.aac.AACAuthorizationService;
 import it.smartcommunitylab.aac.AACProfileService;
 import it.smartcommunitylab.aac.AACRoleService;
 import it.smartcommunitylab.aac.AACService;
+import it.smartcommunitylab.aac.AACServiceDefinitionService;
+import it.smartcommunitylab.aac.AACUserClaimService;
 import it.smartcommunitylab.aac.model.AACTokenIntrospection;
 import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.aac.model.AccountProfiles;
 import it.smartcommunitylab.aac.model.BasicProfile;
 import it.smartcommunitylab.aac.model.BasicProfiles;
 import it.smartcommunitylab.aac.model.Role;
+import it.smartcommunitylab.aac.model.Service;
+import it.smartcommunitylab.aac.model.Service.ServiceClaim;
+import it.smartcommunitylab.aac.model.Service.ServiceScope;
 import it.smartcommunitylab.aac.model.TokenData;
 import it.smartcommunitylab.aac.model.User;
 import it.smartcommunitylab.aac.model.authorization.AuthorizationDTO;
@@ -32,6 +37,10 @@ import it.smartcommunitylab.aac.model.authorization.RequestedAuthorizationDTO;
 @Ignore
 public class AACTest {
 
+	/**
+	 * 
+	 */
+	private static final String TESTCONTEXT = "testservice";
 	private static final String USERNAME = "admin";
 	private static final String PWD = "admin";
 	private static final String TEST = "cartellastudente"; 
@@ -44,6 +53,8 @@ public class AACTest {
 	AACProfileService profileService;
 	AACRoleService roleService;
 	AACAuthorizationService authService;
+	AACServiceDefinitionService serviceService;
+	AACUserClaimService claimService;
 	
 	private ObjectMapper mapper = new ObjectMapper();	
 	
@@ -53,6 +64,8 @@ public class AACTest {
 		profileService = new AACProfileService(aacURL);
 		roleService = new AACRoleService(aacURL);
 		authService = new AACAuthorizationService(aacURL);
+		serviceService = new AACServiceDefinitionService(aacURL);
+		claimService = new AACUserClaimService(aacURL);
 	}
 
 	@Test
@@ -170,7 +183,57 @@ public class AACTest {
 		
 		roleService.deleteRoles(clientToken, profile.getUserId(), Lists.newArrayList(AUTHORIZATION_TEST));
 	}
-	
+
+	@Test
+	public void testServicesAndClaims() throws Exception {
+		String clientToken = aacService.generateClientToken("profile.basicprofile.all user.roles.write authorization.manage authorization.schema.manage servicemanagement claimmanagement").getAccess_token();
+
+		Service svc = new Service();
+		svc.setContext(TESTCONTEXT);
+		svc.setName("name");
+		svc.setNamespace("namespace");
+		svc.setDescription("description");
+		svc.setServiceId("mytestservice");
+		
+		// create service
+		Service res = serviceService.saveService(clientToken, svc);
+		Assert.assertEquals(svc.getServiceId(), res.getServiceId());
+
+		// create scope
+		ServiceScope scope = new ServiceScope();
+		scope.setScope("scope1");
+		scope.setName("name");
+		scope.setDescription("description");
+		scope.setServiceId(svc.getServiceId());
+		serviceService.saveScope(clientToken, scope);
+		res = serviceService.getService(clientToken, svc.getServiceId());
+		Assert.assertEquals(1, res.getScopes().size());
+
+		// create claim
+		ServiceClaim claim = new ServiceClaim();
+		claim.setClaim("claim1");
+		claim.setName("claim name");
+		claim.setServiceId(svc.getServiceId());
+		claim.setType("object");
+		serviceService.saveClaim(clientToken, claim);
+		res = serviceService.getService(clientToken, svc.getServiceId());
+		Assert.assertEquals(1, res.getClaims().size());
+
+		
+		// delete scope
+		serviceService.deleteScope(clientToken, svc.getServiceId(), scope.getScope());
+		res = serviceService.getService(clientToken, svc.getServiceId());
+		Assert.assertEquals(0, res.getScopes().size());
+		
+		// delete claim
+		serviceService.deleteClaim(clientToken, svc.getServiceId(), claim.getClaim());
+		res = serviceService.getService(clientToken, svc.getServiceId());
+		Assert.assertEquals(0, res.getClaims().size());
+
+		// delete service
+		serviceService.deleteService(clientToken, svc.getServiceId());
+		
+	}
 	
 
 }

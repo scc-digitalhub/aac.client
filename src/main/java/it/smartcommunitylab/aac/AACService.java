@@ -48,7 +48,7 @@ public class AACService {
     /** address of the authorization endpoint */
 	private static final String AUTH_PATH = "eauth/authorize";
     /** address of the token introspection endpoint */
-	private static final String PATH_INTROSPECTION = "token_introspection";
+	private static final String PATH_INTROSPECTION = "oauth/introspect";
     /** address of the userinfo endpoint */
 	private static final String PATH_USERINFO = "userinfo";
 
