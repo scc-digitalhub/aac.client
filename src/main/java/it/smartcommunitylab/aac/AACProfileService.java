@@ -1,6 +1,9 @@
 package it.smartcommunitylab.aac;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -13,9 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
 import it.smartcommunitylab.aac.model.AccountProfile;
-import it.smartcommunitylab.aac.model.AccountProfiles;
 import it.smartcommunitylab.aac.model.BasicProfile;
-import it.smartcommunitylab.aac.model.BasicProfiles;
 
 public class AACProfileService {
 
@@ -34,7 +35,7 @@ public class AACProfileService {
 		}
 	}	
 	
-	public BasicProfiles searchUsersByUsername(String token, String username) throws SecurityException, AACException {
+	public Collection<BasicProfile> searchUsersByUsername(String token, String username) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "basicprofile/all?username="+username;
@@ -45,8 +46,9 @@ public class AACProfileService {
 	            resp = getHttpClient().execute(get);
 	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            	BasicProfiles data = mapper.readValue(response, BasicProfiles.class);
-	                return data;
+	                List<?> data = mapper.readValue(response, List.class);
+                    Set<BasicProfile> result = (Set<BasicProfile>) data.stream().map(x -> mapper.convertValue(x, BasicProfile.class)).collect(Collectors.toSet());
+                    return result;	                
 	            }
 	            throw new AACException("Error in basicprofile/all " + resp.getStatusLine());
 	        } catch (final Exception e) {
@@ -56,7 +58,7 @@ public class AACProfileService {
 			throw new AACException(e);
 		}
 	}	
-	public BasicProfiles searchUsersByFullname(String token, String name) throws SecurityException, AACException {
+	public Collection<BasicProfile> searchUsersByFullname(String token, String name) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "basicprofile/all?filter="+name;
@@ -67,8 +69,9 @@ public class AACProfileService {
 	            resp = getHttpClient().execute(get);
 	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            	BasicProfiles data = mapper.readValue(response, BasicProfiles.class);
-	                return data;
+                    List<?> data = mapper.readValue(response, List.class);
+                    Set<BasicProfile> result = (Set<BasicProfile>) data.stream().map(x -> mapper.convertValue(x, BasicProfile.class)).collect(Collectors.toSet());
+                    return result;    
 	            }
 	            throw new AACException("Error in basicprofile/all " + resp.getStatusLine());
 	        } catch (final Exception e) {
@@ -79,7 +82,7 @@ public class AACProfileService {
 		}
 	}
 	
-	public BasicProfiles findProfiles(String token, List<String> userIds) throws SecurityException, AACException {
+	public Collection<BasicProfile> findProfiles(String token, List<String> userIds) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "basicprofile/profiles?userIds=" + Joiner.on(",").join(userIds);
@@ -90,8 +93,9 @@ public class AACProfileService {
 	            resp = getHttpClient().execute(get);
 	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            	BasicProfiles data = mapper.readValue(response, BasicProfiles.class);
-	                return data;
+                    List<?> data = mapper.readValue(response, List.class);
+                    Set<BasicProfile> result = (Set<BasicProfile>) data.stream().map(x -> mapper.convertValue(x, BasicProfile.class)).collect(Collectors.toSet());
+                    return result;    
 	            }
 	            throw new AACException("Error in basicprofile/profiles " + resp.getStatusLine());
 	        } catch (final Exception e) {
@@ -148,7 +152,7 @@ public class AACProfileService {
 		}
 	}	
 	
-	public AccountProfiles findAccountProfiles(String token, List<String> userIds) throws SecurityException, AACException {
+	public Collection<AccountProfile> findAccountProfiles(String token, List<String> userIds) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "accountprofile/profiles?userIds=" + Joiner.on(",").join(userIds);
@@ -159,8 +163,9 @@ public class AACProfileService {
 	            resp = getHttpClient().execute(get);
 	            final String response = EntityUtils.toString(resp.getEntity());
 	            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	            	AccountProfiles data = mapper.readValue(response, AccountProfiles.class);
-	                return data;
+                    List<?> data = mapper.readValue(response, List.class);
+                    Set<AccountProfile> result = (Set<AccountProfile>) data.stream().map(x -> mapper.convertValue(x, AccountProfile.class)).collect(Collectors.toSet());
+                    return result;    
 	            }
 	            throw new AACException("Error in accountprofile/profiles " + resp.getStatusLine());
 	        } catch (final Exception e) {

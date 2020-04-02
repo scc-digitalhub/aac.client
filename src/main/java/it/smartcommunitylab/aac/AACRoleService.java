@@ -1,5 +1,6 @@
 package it.smartcommunitylab.aac;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class AACRoleService {
 		if (!aacURL.endsWith("/")) this.aacURL += '/';
 	}	
 	
-	public Set<Role> getRoles(String token) throws SecurityException, AACException {
+	public Collection<Role> getRoles(String token) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/me";
@@ -102,7 +103,7 @@ public class AACRoleService {
 	
 	}	
 	
-	public Set<Role> getRolesByUserId(String token, String userId) throws SecurityException, AACException {
+	public Collection<Role> getRolesByUserId(String token, String userId) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/user/" + userId;
@@ -126,7 +127,7 @@ public class AACRoleService {
 		}
 	}		
 	
-	public Set<Role> getRolesByClientId(String token, String clientId) throws SecurityException, AACException {
+	public Collection<Role> getRolesByClientId(String token, String clientId) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/client/" + clientId;
@@ -150,7 +151,7 @@ public class AACRoleService {
 		}
 	}
 	
-	public Set<Role> getRolesByToken(String token, String clientToken) throws SecurityException, AACException {
+	public Collection<Role> getRolesByToken(String token, String clientToken) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/token/" + clientToken;
@@ -174,7 +175,7 @@ public class AACRoleService {
 		}
 	}
 
-	public Set<User> getSpaceUsers(String context, String role, boolean nested, Integer offset, Integer limit, String clientToken) throws SecurityException, AACException {
+	public Collection<User> getSpaceUsers(String context, String role, boolean nested, Integer offset, Integer limit, String clientToken) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/role?context="+context;
@@ -202,7 +203,7 @@ public class AACRoleService {
 		}
 	}
 	
-	public Set<Role> getClientRoles(String token) throws SecurityException, AACException {
+	public Collection<Role> getClientRoles(String token) throws SecurityException, AACException {
 		try {
 	        final HttpResponse resp;
 	        String url = aacURL + "userroles/client";

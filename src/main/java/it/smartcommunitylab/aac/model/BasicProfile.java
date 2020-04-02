@@ -19,7 +19,6 @@ public class BasicProfile {
 	
 	private String name;
 	private String surname;
-	
 	private String userId;
 	private String username;
 
