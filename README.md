@@ -5,6 +5,26 @@ intended for use in server-side Java applications.
 
 See [AAC documentation](https://github.com/scc-digitalhub/AAC) for API details. 
 
+To include the library as Maven dependency use the following definitions:
+
+```
+    <dependency>
+      <groupId>it.smartcommunitylab</groupId>
+      <artifactId>aac.client</artifactId>
+      <version>3.1.1</version>
+    </dependency>
+    
+    ...
+    
+  <repositories>
+    <repository>
+      <id>SmartCommunity</id>
+      <url>http://repository.smartcommunitylab.it/content/groups/public</url>
+    </repository>
+    ...
+  </repositories>
+```
+
 ## 1. Common Methods
 
 The ``AAACService`` class provides a set common OAuth2.0 methods. First, initialize an instance of
@@ -106,3 +126,13 @@ Map<String, Object> usernData = aacService.userInfo(token);
 ```
  
 which provides a map of user claims (if the corresponding token is valid). 
+
+## 2. Specific API classes
+
+The library includes a set of classes to deal with the custom AAC APIs. In particular
+
+- ``AACProfileService`` deals with the user profile and account information
+- ``AACRoleService`` deals with the Role API
+- ``AACAuthorizationService`` deals with the authorization module
+- ``AACServiceDefinitionService`` deals with the API to create and manage custom resource services (scopes, claims definition)
+- ``AACUserClaimService`` deals with the API to associate custom claims for the user.
